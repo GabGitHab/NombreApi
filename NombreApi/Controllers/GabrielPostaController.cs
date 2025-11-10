@@ -1,27 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-
-[Route("api/[controller]")]
-[ApiController]
-public class GabrielPostaController : ControllerBase
+namespace TerminoDeBusqueda.Controllers
 {
-    public readonly HttpClient httpClient;
-
-    public GabrielPostaController(HttpClient httpClient)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class GabrielPosta : ControllerBase
     {
-        this.httpClient = httpClient;
-        httpClient.BaseAddress = new Uri("");
-    }
-    [HttpGet]
-    public async Task<IActionResult> Get()
-    {
-        var respuesta = await httpClient.GetAsync("http://localhost:521/api/NachoPosta");
-        if (respuesta.IsSuccessStatusCode)
+        public readonly HttpClient _httpClient;
+        public GabrielPosta(HttpClient httpClient)
         {
-            var data = await respuesta.Content.ReadAsStringAsync();
-            Console.WriteLine("Por aqui paso la posta de Gabriel");
+            _httpClient = httpClient;
         }
 
-        return StatusCode((int)respuesta.StatusCode, "");
+        [HttpGet]
+
+        public async Task<IActionResult> get()
+        {
+            var response = await _httpClient.GetAsync("https://localhost:numero/api/FernadnoPosta");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Por aca paso la posta de Gabriel");
+                return Ok(content);
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, "Error al llamar a Fernando");
+            }
+
+        }
+
     }
 }
